@@ -20,6 +20,7 @@ endif()
 if(NOT LLVM_BUILD_LLVM_DYLIB )
   set(LLVM_TOOL_LLVM_SHLIB_BUILD Off)
 endif()
+add_llvm_tool_subdirectory(llvm-spirv)
 
 if(NOT LLVM_USE_INTEL_JITEVENTS )
   set(LLVM_TOOL_LLVM_JITLISTENER_BUILD Off)

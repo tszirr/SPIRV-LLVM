@@ -1237,6 +1237,9 @@ public:
   /// Return an undef of the right value for the specified GEP index.
   UndefValue *getElementValue(unsigned Idx) const;
 
+  /// \brief Return the number of elements in the array, vector, or struct.
+  unsigned getNumElements() const;
+
   /// Return the number of elements in the array, vector, or struct.
   unsigned getNumElements() const;
 

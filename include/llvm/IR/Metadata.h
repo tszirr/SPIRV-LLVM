@@ -182,6 +182,9 @@ class MetadataAsValue : public Value {
   /// \brief Drop use of metadata (during teardown).
   void dropUse() { MD = nullptr; }
 
+  /// \brief Drop use of metadata (during teardown).
+  void dropUse() { MD = nullptr; }
+
 public:
   static MetadataAsValue *get(LLVMContext &Context, Metadata *MD);
   static MetadataAsValue *getIfExists(LLVMContext &Context, Metadata *MD);

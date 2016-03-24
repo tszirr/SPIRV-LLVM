@@ -403,6 +403,9 @@
 /* Have host's ___chkstk_ms */
 #cmakedefine HAVE____CHKSTK_MS ${HAVE____CHKSTK_MS}
 
+/* Have host's ___chkstk_ms */
+#cmakedefine HAVE____CHKSTK_MS ${HAVE____CHKSTK_MS}
+
 /* Linker version detected at compile time. */
 #undef HOST_LINK_VERSION
 

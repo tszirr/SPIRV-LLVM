@@ -36,6 +36,24 @@ class DbgValueInst;
 /// \brief Maps from type identifier to the actual MDNode.
 typedef DenseMap<const MDString *, DIType *> DITypeIdentifierMap;
 
+  }
+  unsigned getColumnNumber() const {
+    if (auto *L = dyn_cast_or_null<MDLocation>(DbgNode))
+      return L->getColumn();
+    return 0;
+  }
+  DIScope getScope() const {
+    if (auto *L = dyn_cast_or_null<MDLocation>(DbgNode))
+      return DIScope(dyn_cast_or_null<MDNode>(L->getScope()));
+    return DIScope(nullptr);
+  }
+  DILocation getOrigLocation() const {
+    if (auto *L = dyn_cast_or_null<MDLocation>(DbgNode))
+      return DILocation(dyn_cast_or_null<MDNode>(L->getInlinedAt()));
+    return DILocation(nullptr);
+  }
+                     cast<MDNode>(cast<MDLocation>(DbgNode)->getScope()))
+                     .getDiscriminator()
 /// \brief Find subprogram that is enclosing this scope.
 DISubprogram *getDISubprogram(const MDNode *Scope);
 

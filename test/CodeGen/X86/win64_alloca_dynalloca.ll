@@ -31,6 +31,13 @@ entry:
 ; L64: callq *%r11
 ; L64: subq  %rax, %rsp
 
+; Use %r11 for the large model.
+; L64: movq  %rsp, %rbp
+; L64:       $4096, %rax
+; L64: movabsq $__chkstk, %r11
+; L64: callq *%r11
+; L64: subq  %rax, %rsp
+
 ; Freestanding
 ; EFI:       $[[B0OFS:4096|4104]], %rsp
 ; EFI-NOT:   call

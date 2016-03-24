@@ -55,6 +55,7 @@ set(LLVM_TEST_DEPENDS
           llvm-rtdyld
           llvm-size
           llvm-split
+          llvm-spirv
           llvm-symbolizer
           llvm-tblgen
           not
