@@ -289,14 +289,9 @@ static Triple::ArchType parseARMArch(StringRef ArchName) {
   case ARM::EK_LITTLE: {
     switch (ISA) {
     case ARM::IK_ARM:
-    } else
       arch = Triple::arm;
       break;
     case ARM::IK_THUMB:
-    if (ArchName.endswith("eb")) {
-      arch = Triple::thumbeb;
-      ArchName = ArchName.substr(0, ArchName.size() - 2);
-    } else
       arch = Triple::thumb;
       break;
     case ARM::IK_AARCH64:
@@ -345,7 +340,6 @@ static Triple::ArchType parseARMArch(StringRef ArchName) {
 
 static Triple::ArchType parseArch(StringRef ArchName) {
   auto AT = StringSwitch<Triple::ArchType>(ArchName)
-
     .Cases("i386", "i486", "i586", "i686", Triple::x86)
     // FIXME: Do we need to support these?
     .Cases("i786", "i886", "i986", Triple::x86)
@@ -1434,8 +1428,6 @@ StringRef Triple::getARMCPUForArch(StringRef MArch) const {
 
   if (MArch.empty())
     return StringRef();
-  if (MArch.endswith("eb"))
-    MArch = MArch.substr(0, MArch.size() - 2);
 
   StringRef CPU = ARM::getDefaultCPU(MArch);
   if (!CPU.empty())

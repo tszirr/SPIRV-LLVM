@@ -2226,14 +2226,15 @@ void SelectionDAGBuilder::visitLandingPad(const LandingPadInst &LP) {
   // Get the two live-in registers as SDValues. The physregs have already been
   // copied into virtual registers.
   SDValue Ops[2];
-  Ops[0] = DAG.getZExtOrTrunc(
   if (FuncInfo.ExceptionPointerVirtReg) {
     Ops[0] = DAG.getZExtOrTrunc(
         DAG.getCopyFromReg(DAG.getEntryNode(), dl,
                            FuncInfo.ExceptionPointerVirtReg,
                            TLI.getPointerTy(DAG.getDataLayout())),
         dl, ValueVTs[0]);
+  } else {
     Ops[0] = DAG.getConstant(0, dl, TLI.getPointerTy(DAG.getDataLayout()));
+  }
   Ops[1] = DAG.getZExtOrTrunc(
       DAG.getCopyFromReg(DAG.getEntryNode(), dl,
                          FuncInfo.ExceptionSelectorVirtReg,
@@ -3180,6 +3181,7 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
       if (!CI && isa<ConstantDataVector>(Idx) &&
           cast<ConstantDataVector>(Idx)->getSplatValue())
         CI = cast<ConstantInt>(cast<ConstantDataVector>(Idx)->getSplatValue());
+
       if (CI) {
         if (CI->isZero())
           continue;

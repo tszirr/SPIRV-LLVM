@@ -60,6 +60,7 @@ LLVMBool LLVMParseBitcodeInContext(LLVMContextRef ContextRef,
   Ctx.setDiagnosticHandler(OldDiagnosticHandler, OldDiagnosticContext, true);
 
   if (ModuleOrErr.getError()) {
+    if (OutMessage)
       *OutMessage = strdup(Message.c_str());
     *OutModule = wrap((Module *)nullptr);
     return 1;

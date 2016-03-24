@@ -454,7 +454,6 @@ void TargetPassConfig::addPassesToHandleExceptions() {
     addPass(createWinEHPass(TM));
     addPass(createDwarfEHPass(TM));
     break;
-  case ExceptionHandling::MSVC: // FIXME: Add preparation.
   case ExceptionHandling::None:
     addPass(createLowerInvokePass());
 

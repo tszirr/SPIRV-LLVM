@@ -39,10 +39,6 @@ int llvm_disassemble(void);
 int llvm_add_named_metadata_operand(void);
 int llvm_set_metadata(void);
 
-// metadata.c
-int add_named_metadata_operand(void);
-int set_metadata(void);
-
 // object.c
 int llvm_object_list_sections(void);
 int llvm_object_list_symbols(void);
