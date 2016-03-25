@@ -54,9 +54,10 @@
 namespace llvm {
 
 class SPIRVTargetMachine;
+class SPIRVSubtarget;
 class SPIRVTargetLowering : public TargetLowering {
 public:
-  explicit SPIRVTargetLowering(SPIRVTargetMachine &TM);
+  explicit SPIRVTargetLowering(SPIRVTargetMachine &T, const SPIRVSubtarget &ST);
 };
 
 } // end llvm namespace

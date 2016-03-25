@@ -45,7 +45,7 @@
 #include "llvm/ADT/Triple.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/MC/MCInstrItineraries.h"
-#include "llvm/Target/TargetSelectionDAGInfo.h"
+#include "llvm/CodeGen/SelectionDAGTargetInfo.h"
 #include "llvm/Target/TargetSubtargetInfo.h"
 #include <string>
 
@@ -57,11 +57,10 @@ class SPIRVTargetMachine;
 
 class SPIRVSubtarget : public SPIRVGenSubtargetInfo {
 public:
-  SPIRVSubtarget(const std::string &TT, const std::string &CPU,
+  SPIRVSubtarget(const Triple &TT, const std::string &CPU,
                  const std::string &FS, const SPIRVTargetMachine &TM);
 
   const Triple &getTargetTriple() const { return TargetTriple; }
-  const DataLayout *getDataLayout() const override { return &DL; }
   const SPIRVTargetLowering *getTargetLowering() const override {
     return &TLInfo;
   }
@@ -69,7 +68,7 @@ public:
   const SPIRVFrameLowering *getFrameLowering() const override {
     return &FrameLowering;
   }
-  const TargetSelectionDAGInfo *getSelectionDAGInfo() const override {
+  const SelectionDAGTargetInfo *getSelectionDAGInfo() const override {
     return &TSInfo;
   }
   const SPIRVRegisterInfo *getRegisterInfo() const override {
@@ -78,8 +77,7 @@ public:
 private:
   const SPIRVTargetMachine &TM;
   Triple TargetTriple;
-  const DataLayout DL;
-  TargetSelectionDAGInfo TSInfo;
+  SelectionDAGTargetInfo TSInfo;
   SPIRVInstrInfo InstrInfo;
   SPIRVTargetLowering TLInfo;
   SPIRVFrameLowering FrameLowering;

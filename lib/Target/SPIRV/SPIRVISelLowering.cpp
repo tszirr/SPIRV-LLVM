@@ -44,7 +44,7 @@
 
 using namespace llvm;
 
-SPIRVTargetLowering::SPIRVTargetLowering(SPIRVTargetMachine &TM)
+SPIRVTargetLowering::SPIRVTargetLowering(SPIRVTargetMachine &TM, const SPIRVSubtarget &ST)
    : TargetLowering(TM)
 {
   addRegisterClass(MVT::i32, &SPIRV::GPR32RegClass);
@@ -54,5 +54,5 @@ SPIRVTargetLowering::SPIRVTargetLowering(SPIRVTargetMachine &TM)
   addRegisterClass(MVT::f64, &SPIRV::GPR64RegClass);
   addRegisterClass(MVT::i1,  &SPIRV::GPR1RegClass);
 
-  computeRegisterProperties();
+  computeRegisterProperties(ST.getRegisterInfo());
 }

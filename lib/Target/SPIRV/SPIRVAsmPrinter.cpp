@@ -36,14 +36,19 @@
 //===----------------------------------------------------------------------===//
 
 #include "SPIRVAsmPrinter.h"
+#include "llvm/MC/MCStreamer.h"
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Support/TargetRegistry.h"
 using namespace llvm;
 
+SPIRVAsmPrinter::SPIRVAsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> Streamer)
+  : AsmPrinter(TM, std::move(Streamer)) {
+  Subtarget = static_cast<SPIRVTargetMachine&>(TM).getSubtargetImpl();
+}
+
 bool SPIRVAsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   SetupMachineFunction(MF);
-  EmitFunctionHeader();
   EmitFunctionBody();
   return false;
 }

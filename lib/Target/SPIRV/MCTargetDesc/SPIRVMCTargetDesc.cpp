@@ -46,6 +46,8 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/TargetRegistry.h"
 
+#include "llvm/ADT/STLExtras.h"
+
 using namespace llvm;
 
 #define GET_INSTRINFO_MC_DESC
@@ -58,11 +60,11 @@ using namespace llvm;
 #include "SPIRVGenRegisterInfo.inc"
 
 
-static MCCodeGenInfo *createSPIRVMCCodeGenInfo(StringRef TT, Reloc::Model RM,
+static MCCodeGenInfo *createSPIRVMCCodeGenInfo(const Triple &TT, Reloc::Model RM,
                                                CodeModel::Model CM,
                                                CodeGenOpt::Level OL) {
   MCCodeGenInfo *X = new MCCodeGenInfo();
-  X->InitMCCodeGenInfo(RM, CM, OL);
+  X->initMCCodeGenInfo(RM, CM, OL);
   return X;
 }
 

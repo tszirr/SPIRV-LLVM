@@ -39,7 +39,7 @@
 #include "llvm/ADT/Triple.h"
 using namespace llvm;
 
-SPIRVMCAsmInfo::SPIRVMCAsmInfo(StringRef &T) {
+SPIRVMCAsmInfo::SPIRVMCAsmInfo(const Triple &T) {
   PointerSize = Triple(T).getArch() == Triple::spir64 ? 8 : 4;
   ExceptionsType = ExceptionHandling::None;
 }

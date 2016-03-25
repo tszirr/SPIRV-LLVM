@@ -49,14 +49,15 @@ class formatted_raw_ostream;
 
 class SPIRVTargetMachine : public LLVMTargetMachine {
 public:
-  SPIRVTargetMachine(const Target &T, StringRef TT,
+  SPIRVTargetMachine(const Target &T, const Triple& TT,
                    StringRef CPU, StringRef FS, const TargetOptions &Options,
                    Reloc::Model RM, CodeModel::Model CM,
                    CodeGenOpt::Level OL);
   ~SPIRVTargetMachine() override {}
 
   TargetPassConfig *createPassConfig(PassManagerBase &PM) override;
-  const SPIRVSubtarget *getSubtargetImpl() const override { return &Subtarget; }
+  const SPIRVSubtarget *getSubtargetImpl(const Function &) const override { return &Subtarget; }
+  const SPIRVSubtarget *getSubtargetImpl() const { return &Subtarget; }
   TargetLoweringObjectFile *getObjFileLowering() const override { return TLOF; }
 
 private:

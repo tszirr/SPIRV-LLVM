@@ -50,20 +50,29 @@ extern "C" void LLVMInitializeSPIRVTarget() {
   RegisterTargetMachine<SPIRVTargetMachine> Y(TheSPIRVTarget64);
 }
 
+#define SPIRV_DATALAYOUT32 "e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32"\
+                          "-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v24:32:32"\
+                          "-v32:32:32-v48:64:64-v64:64:64-v96:128:128"\
+                          "-v128:128:128-v192:256:256-v256:256:256"\
+                          "-v512:512:512-v1024:1024:1024"
+#define SPIRV_DATALAYOUT64 "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32"\
+                          "-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v24:32:32"\
+                          "-v32:32:32-v48:64:64-v64:64:64-v96:128:128"\
+                          "-v128:128:128-v192:256:256-v256:256:256"\
+                          "-v512:512:512-v1024:1024:1024"
 
 SPIRVTargetMachine::SPIRVTargetMachine(const Target &T,
-                                       StringRef TT,
+                                       const Triple& TT,
                                        StringRef CPU,
                                        StringRef FS,
                                        const TargetOptions &Options,
                                        Reloc::Model RM,
                                        CodeModel::Model CM,
                                        CodeGenOpt::Level OL) :
-  LLVMTargetMachine(T, TT, CPU, FS,Options, RM, CM,OL),
+  LLVMTargetMachine(T, TargetTriple.getArch() == Triple::spir64 ? SPIRV_DATALAYOUT64 : SPIRV_DATALAYOUT32, TT, CPU, FS,Options, RM, CM,OL),
   Subtarget(TT, CPU, FS, *this),
   TLOF(new TargetLoweringObjectFileELF()){
   initAsmInfo();
-  setAsmVerbosityDefault(true);
   setRequiresStructuredCFG(false);
 }
 

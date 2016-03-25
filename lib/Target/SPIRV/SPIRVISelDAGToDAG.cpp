@@ -54,13 +54,11 @@ using namespace llvm;
 namespace {
 class SPIRVDAGToDAGISel : public SelectionDAGISel {
   const SPIRVSubtarget *Subtarget;
-  const DataLayout *DL;
 
 public:
   explicit SPIRVDAGToDAGISel(SPIRVTargetMachine &tm, CodeGenOpt::Level OptLevel)
     : SelectionDAGISel(tm, OptLevel),
-      Subtarget(&tm.getSubtarget<SPIRVSubtarget>()),
-      DL(Subtarget->getDataLayout()) {
+      Subtarget(tm.getSubtargetImpl()) {
       }
   const char *getPassName() const override {
     return "SPIRV DAG->DAG Instruction Selection";

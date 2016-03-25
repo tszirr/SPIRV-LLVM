@@ -41,8 +41,10 @@
 #include "llvm/MC/MCAsmInfo.h"
 
 namespace llvm {
+class Triple;
+
 struct SPIRVMCAsmInfo : public MCAsmInfo {
-  explicit SPIRVMCAsmInfo(StringRef &Triple);
+  explicit SPIRVMCAsmInfo(const Triple &Triple);
 };
 } // namespace llvm
 

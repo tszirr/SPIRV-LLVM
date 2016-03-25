@@ -55,18 +55,13 @@ public:
     : TargetFrameLowering(D, StackAl, LAO, TransAl) {}
 
   virtual void
-  emitPrologue(MachineFunction &MF) const override {};
+  emitPrologue(MachineFunction &MF, MachineBasicBlock &MB) const override {};
 
   virtual void
   emitEpilogue(MachineFunction &MF, MachineBasicBlock &MBB) const override {};
 
   virtual bool
   hasFP(const MachineFunction &MF) const override { return false; };
-
-  virtual int
-  getFrameIndexOffset(const MachineFunction &MF, int FI) const override {
-    return MF.getFrameInfo()->getObjectOffset(FI);
-  };
 
   virtual void
   eliminateCallFramePseudoInstr(MachineFunction &MF,

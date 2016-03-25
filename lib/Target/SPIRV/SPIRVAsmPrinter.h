@@ -34,7 +34,7 @@
 #ifndef LLVM_LIB_TARGET_SPIRV_SPIRVASMPRINTER_H
 #define LLVM_LIB_TARGET_SPIRV_SPIRVASMPRINTER_H
 
-#include "SPIRVSubtarget.h"
+#include "SPIRVTargetMachine.h"
 #include "llvm/CodeGen/AsmPrinter.h"
 #include "llvm/Target/TargetMachine.h"
 
@@ -45,10 +45,7 @@ class LLVM_LIBRARY_VISIBILITY SPIRVAsmPrinter : public AsmPrinter {
   const SPIRVSubtarget *Subtarget;
 
  public:
-  explicit SPIRVAsmPrinter(TargetMachine &TM, MCStreamer &Streamer)
-    : AsmPrinter(TM, Streamer) {
-    Subtarget = &TM.getSubtarget<SPIRVSubtarget>();
-  }
+  explicit SPIRVAsmPrinter(TargetMachine &TM, std::unique_ptr<MCStreamer> Streamer);
 
   const char *getPassName() const override {
     return "SPIRV Assembly / Object Emitter";
