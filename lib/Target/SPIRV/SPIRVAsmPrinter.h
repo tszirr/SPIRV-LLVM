@@ -34,12 +34,12 @@
 #ifndef LLVM_LIB_TARGET_SPIRV_SPIRVASMPRINTER_H
 #define LLVM_LIB_TARGET_SPIRV_SPIRVASMPRINTER_H
 
-#include "SPIRVTargetMachine.h"
 #include "llvm/CodeGen/AsmPrinter.h"
 #include "llvm/Target/TargetMachine.h"
 
 namespace llvm {
 class MCStreamer;
+class SPIRVSubtarget;
 
 class LLVM_LIBRARY_VISIBILITY SPIRVAsmPrinter : public AsmPrinter {
   const SPIRVSubtarget *Subtarget;

@@ -36,6 +36,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "SPIRVAsmPrinter.h"
+#include "SPIRVTargetMachine.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/IR/Module.h"
