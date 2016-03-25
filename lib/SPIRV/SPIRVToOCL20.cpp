@@ -308,7 +308,7 @@ void SPIRVToOCL20::visitCallSPRIVImageQuerySize(CallInst *CI) {
   if (imgArray) {
     assert((imgDim == 1 || imgDim == 2) && "invalid image array type");
     // Insert get_image_array_size to the last position of the resulting vector.
-    Type * sizeTy = Type::getIntNTy(*Ctx, M->getDataLayout()->getPointerSizeInBits(0));
+    Type * sizeTy = Type::getIntNTy(*Ctx, M->getDataLayout().getPointerSizeInBits(0));
     Instruction * getImageArraySize =
       addCallInst(M, kOCLBuiltinName::GetImageArraySize, sizeTy,
                   CI->getArgOperand(0), &attributes,
