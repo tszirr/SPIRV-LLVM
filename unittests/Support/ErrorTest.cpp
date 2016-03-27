@@ -35,6 +35,9 @@ public:
     llvm_unreachable("CustomError doesn't support ECError conversion");
   }
 
+  // Used by ErrorInfo::classID.
+  static char ID;
+
 protected:
   // This error is subclassed below, but we can't use inheriting constructors
   // yet, so we can't propagate the constructors through ErrorInfo. Instead
@@ -44,6 +47,8 @@ protected:
 
   int Info;
 };
+
+char CustomError::ID = 0;
 
 // Custom error class with a custom base class and some additional random
 // 'info'.
@@ -66,9 +71,14 @@ public:
     llvm_unreachable("CustomSubError doesn't support ECError conversion");
   }
 
+  // Used by ErrorInfo::classID.
+  static char ID;
+
 protected:
   int ExtraInfo;
 };
+
+char CustomSubError::ID = 0;
 
 static Error handleCustomError(const CustomError &CE) { return Error(); }
 
@@ -92,6 +102,32 @@ TEST(Error, CheckedSuccess) {
 TEST(Error, UncheckedSuccess) {
   EXPECT_DEATH({ Error E; }, "Program aborted due to an unhandled Error:")
       << "Unchecked Error Succes value did not cause abort()";
+}
+#endif
+
+// ErrorAsOutParameter tester.
+void errAsOutParamHelper(Error &Err) {
+  ErrorAsOutParameter ErrAsOutParam(Err);
+  // Verify that checked flag is raised - assignment should not crash.
+  Err = Error::success();
+  // Raise the checked bit manually - caller should still have to test the
+  // error.
+  (void)!!Err;
+}
+
+// Test that ErrorAsOutParameter sets the checked flag on construction.
+TEST(Error, ErrorAsOutParameterChecked) {
+  Error E;
+  errAsOutParamHelper(E);
+  (void)!!E;
+}
+
+// Test that ErrorAsOutParameter clears the checked flag on destruction.
+#ifndef NDEBUG
+TEST(Error, ErrorAsOutParameterUnchecked) {
+  EXPECT_DEATH({ Error E; errAsOutParamHelper(E); },
+               "Program aborted due to an unhandled Error:")
+      << "ErrorAsOutParameter did not clear the checked flag on destruction.";
 }
 #endif
 
@@ -453,6 +489,3 @@ TEST(Error, ErrorCodeConversions) {
 }
 
 } // end anon namespace
-
-template <> char ErrorInfo<CustomError>::ID = 0;
-template <> char ErrorInfo<CustomSubError, CustomError>::ID = 0;

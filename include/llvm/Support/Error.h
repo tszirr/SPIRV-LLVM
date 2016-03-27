@@ -285,10 +285,7 @@ public:
     return ClassID == classID() || ParentErrT::isA(ClassID);
   }
 
-  static const void *classID() { return &ID; }
-
-private:
-  static char ID;
+  static const void *classID() { return &ThisErrT::ID; }
 };
 
 /// Special ErrorInfo subclass representing a list of ErrorInfos.
@@ -313,6 +310,9 @@ public:
   }
 
   std::error_code convertToErrorCode() const override;
+
+  // Used by ErrorInfo::classID.
+  static char ID;
 
 private:
   ErrorList(std::unique_ptr<ErrorInfoBase> Payload1,
@@ -545,6 +545,36 @@ inline void consumeError(Error Err) {
   handleAllErrors(std::move(Err), [](const ErrorInfoBase &) {});
 }
 
+/// Helper for Errors used as out-parameters.
+///
+/// This helper is for use with the Error-as-out-parameter idiom, where an error
+/// is passed to a function or method by reference, rather than being returned.
+/// In such cases it is helpful to set the checked bit on entry to the function
+/// so that the error can be written to (unchecked Errors abort on assignment)
+/// and clear the checked bit on exit so that clients cannot accidentally forget
+/// to check the result. This helper performs these actions automatically using
+/// RAII:
+///
+/// Result foo(Error &Err) {
+///   ErrorAsOutParameter ErrAsOutParam(Err); // 'Checked' flag set
+///   // <body of foo>
+///   // <- 'Checked' flag auto-cleared when ErrAsOutParam is destructed.
+/// }
+class ErrorAsOutParameter {
+public:
+  ErrorAsOutParameter(Error &Err) : Err(Err) {
+    // Raise the checked bit if Err is success.
+    (void)!!Err;
+  }
+  ~ErrorAsOutParameter() {
+    // Clear the checked bit.
+    if (!Err)
+      Err = Error::success();
+  }
+private:
+  Error &Err;
+};
+
 /// Tagged union holding either a T or a Error.
 ///
 /// This class parallels ErrorOr, but replaces error_code with Error. Since
@@ -725,6 +755,9 @@ public:
   void setErrorCode(std::error_code EC) { this->EC = EC; }
   std::error_code convertToErrorCode() const override { return EC; }
   void log(raw_ostream &OS) const override { OS << EC.message(); }
+
+  // Used by ErrorInfo::classID.
+  static char ID;
 
 protected:
   std::error_code EC;

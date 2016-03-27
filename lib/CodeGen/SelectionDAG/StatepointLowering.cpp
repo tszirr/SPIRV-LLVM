@@ -821,12 +821,15 @@ SelectionDAGBuilder::LowerStatepoint(ImmutableStatepoint ISP,
   }
 }
 
-void SelectionDAGBuilder::LowerCallSiteWithDeoptBundle(
-    ImmutableCallSite CS, SDValue Callee, const BasicBlock *EHPadBB) {
+void SelectionDAGBuilder::LowerCallSiteWithDeoptBundleImpl(
+    ImmutableCallSite CS, SDValue Callee, const BasicBlock *EHPadBB,
+    bool VarArgDisallowed) {
   StatepointLoweringInfo SI(DAG);
   unsigned ArgBeginIndex = CS.arg_begin() - CS.getInstruction()->op_begin();
   populateCallLoweringInfo(SI.CLI, CS, ArgBeginIndex, CS.getNumArgOperands(),
                            Callee, CS.getType(), false);
+  if (!VarArgDisallowed)
+    SI.CLI.IsVarArg = CS.getFunctionType()->isVarArg();
 
   auto DeoptBundle = *CS.getOperandBundle(LLVMContext::OB_deopt);
 
@@ -841,11 +844,19 @@ void SelectionDAGBuilder::LowerCallSiteWithDeoptBundle(
   SI.StatepointFlags = static_cast<uint64_t>(StatepointFlags::None);
   SI.EHPadBB = EHPadBB;
 
+  // NB! The GC arguments are deliberately left empty.
+
   if (SDValue ReturnVal = LowerAsSTATEPOINT(SI)) {
     const Instruction *Inst = CS.getInstruction();
     ReturnVal = lowerRangeToAssertZExt(DAG, *Inst, ReturnVal);
     setValue(Inst, ReturnVal);
   }
+}
+
+void SelectionDAGBuilder::LowerCallSiteWithDeoptBundle(
+    ImmutableCallSite CS, SDValue Callee, const BasicBlock *EHPadBB) {
+  LowerCallSiteWithDeoptBundleImpl(CS, Callee, EHPadBB,
+                                   /* VarArgDisallowed = */ false);
 }
 
 void SelectionDAGBuilder::visitGCResult(const CallInst &CI) {
@@ -922,4 +933,15 @@ void SelectionDAGBuilder::visitGCRelocate(const GCRelocateInst &Relocate) {
 
   assert(SpillLoad.getNode());
   setValue(&Relocate, SpillLoad);
+}
+
+void SelectionDAGBuilder::LowerDeoptimizeCall(const CallInst *CI) {
+  const auto &TLI = DAG.getTargetLoweringInfo();
+  SDValue Callee = DAG.getExternalSymbol(TLI.getLibcallName(RTLIB::DEOPTIMIZE),
+                                         TLI.getPointerTy(DAG.getDataLayout()));
+
+  // We don't lower calls to __llvm_deoptimize as varargs, but as a regular
+  // call.
+  LowerCallSiteWithDeoptBundleImpl(CI, Callee, /* EHPadBB = */ nullptr,
+                                   /* VarArgDisallowed = */ true);
 }

@@ -1,12 +1,13 @@
 ; RUN: llc -enable-dwarf-directory -mtriple x86_64-apple-darwin10.0.0  < %s | FileCheck %s
 
-; Radar 8884898
+; Verify that the file name is relative to the directory.
+; rdar://problem/8884898
 ; CHECK: file	1 "simple.c"
 
 declare i32 @printf(i8*, ...) nounwind
 
 define i32 @main() nounwind !dbg !6 {
-  ret i32 0, !dbg !13
+  ret i32 0
 }
 
 !llvm.dbg.cu = !{!2}
@@ -22,4 +23,3 @@ define i32 @main() nounwind !dbg !6 {
 !10 = !DIFile(filename: "simple.c", directory: "/Users/manav/one/two")
 !11 = !{}
 !12 = !{i32 1, !"Debug Info Version", i32 3}
-!13 = !DILocation(line: 10, scope: !6)
