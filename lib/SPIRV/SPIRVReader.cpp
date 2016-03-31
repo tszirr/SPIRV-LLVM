@@ -1052,7 +1052,7 @@ SPIRVToLLVM::postProcessOCLBuiltinWithArrayArguments(Function* F,
       auto T = I->getType();
       if (!T->isArrayTy())
         continue;
-      auto Alloca = new AllocaInst(T, "", FBegin);
+      auto Alloca = new AllocaInst(T, "", &*FBegin);
       auto Store = new StoreInst(I, Alloca, false, CI);
       auto Zero = ConstantInt::getNullValue(Type::getInt32Ty(T->getContext()));
       Value *Index[] = {Zero, Zero};
